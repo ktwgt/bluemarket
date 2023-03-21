@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+  
+  
+  	<mapper namespace="kr.co.ilck.mapper.ChatMapper">
+  	
+  		<select id="room_check" resultType="boolean">
+  			select if(count(*)=0, 'false', 'true') from chat where
+  			(writer=#{param1} and opponent=#{param2}) or 
+  			(writer=#{param2} and opponent=#{param1})
+  		</select>
+  		
+  		<select id="send_roomId" resultType="int">
+  			select max(roomId) from chat where
+  			(writer=#{param1} and opponent=#{param2}) or 
+  			(writer=#{param2} and opponent=#{param1})
+  		</select>
+  		
+  		<select id="new_roomId" resultType="int">
+  			select max(roomId)+1 from chat
+  		</select>
+  	
+  		<insert id="addMessage" parameterType="kr.co.ilck.vo.ChatVo">
+  			insert into chat(writer,body,roomId,writeday,opponent)
+  			values(#{writer},#{body},#{roomId},now(),#{opponent})
+  		</insert>
+  	
+  		<select id="getMessages" resultType="kr.co.ilck.vo.ChatVo">
+  			select * from chat where roomId=#{param} order by id asc
+  		</select>
+  		
+  		<select id="getMessagesFrom" resultType="kr.co.ilck.vo.ChatVo">
+  			select * from chat where roomId=#{param} order by id asc
+  		</select>
+  		
+  		<select id="chating_list" resultType="kr.co.ilck.vo.ChatVo">
+  			select * from chat where
+  			(writer=#{param} or opponent=#{param}) and
+  			id=any(select max(id) from chat group by roomId)
+  		</select>
+  		
+  		<select id="chating_list_check" resultType="boolean">
+  			select if( (select count(*) from chat 
+  			where writer=#{param} or opponent=#{param})>0, 'true', 'false' )
+  		</select>
+  	
+  	</mapper>

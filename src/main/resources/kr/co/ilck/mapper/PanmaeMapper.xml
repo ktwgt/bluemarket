@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+
+<mapper namespace="kr.co.ilck.mapper.PanmaeMapper">
+    <select id="getDae" resultType="kr.co.ilck.vo.DaeVo">
+        select * from dae order by id asc
+    </select>
+
+    <select id="getJung" resultType="kr.co.ilck.vo.JungVo">
+        select * from jung where daecode=#{param} order by id asc
+    </select>
+
+    <select id="getSo" resultType="kr.co.ilck.vo.SoVo">
+        select * from so where daejung=#{param} order by id asc
+    </select>
+
+    <select id="getCode" resultType="int">
+        select ifnull( max( right(pcode,3) ) , 0 )+1 from panmae
+        where pcode like concat(#{param},'%')
+    </select>
+
+    <select id="getChong" resultType="int">
+        select ceil(count(*)/20) from panmae
+        where pcode like concat(#{param1},'%')
+    </select>
+
+    <select id="plist" resultType="kr.co.ilck.vo.PanmaeVo">
+    select * from panmae where sstate!=2 and singo_state=0 and pcode like concat(#{param1}, '%')
+    order by id desc limit #{param2}, 20
+    </select>
+
+
+    <insert id="panmae_ok" parameterType="kr.co.ilck.vo.PanmaeVo">
+    insert into panmae(userid ,cimg,pimg,title,price,pcode,selltime,loca,pstate,content,writeday)
+    values(#{userid},#{cimg},#{pimg},#{title},#{price},#{pcode},#{selltime},#{loca},#{pstate},#{content},now())
+    </insert>
+
+    <update id="readnum">
+        update panmae set readnum=readnum+1 where pcode=#{param}
+
+    </update>
+    
+    <select id="pcontent" resultType="kr.co.ilck.vo.PanmaeVo">
+        select * from panmae  where pcode=#{param}
+
+    </select>
+    
+    <select id="getNow" resultType="kr.co.ilck.vo.PanmaeVo">
+     select pcode,cimg,title from panmae where pcode=#{param}
+    </select> 
+
+
+    <select id="getwish" resultType="int">
+        select count(w.pid) from wish as w inner join panmae as p on p.id=w.pid where pcode=#{param}
+    </select>
+
+    <insert id="wishadd">
+        insert into wish(pid, userid, writeday) values(#{param1}, #{param2}, now())
+
+    </insert>
+
+    <select id="getcpcode" resultType="int">
+        select count(pcode) from panmae where userid=#{param}
+    </select>
+
+    <select id="getcimg" resultType="kr.co.ilck.vo.PanmaeVo">
+    select * from panmae where pcode like concat(#{param},'%') order by rand() limit 6
+    </select>
+
+    <select id="getwishcount" resultType="int">
+    select count(*) from wish where pid=#{param1} and userid=#{param2}
+
+    </select>
+
+    <select id="getimgs" resultType="kr.co.ilck.vo.PanmaeVo">
+        select cimg from panmae where userid=#{param} order by rand() limit 2
+
+    </select>
+
+    <select id="desc" resultType="kr.co.ilck.vo.PanmaeVo">
+        select * from panmae where pcode like concat(#{param1},'%') and 
+        title like concat('%', #{param2}, '%')
+        order by  ${param3}
+
+    </select>
+<!--
+    <insert id="singo_ok" resultType="kr.co.ilck.vo.SingoVo">
+        insert into singo(userid ,writeday,singo_userid,pid,content, title)
+        values(#{userid},now(),#{singo_userid},#{pid},#{content}, #{title})
+    </insert>
+
+-->	
+	<select id="pro_search" resultType="kr.co.ilck.vo.PanmaeVo">
+    		select * from panmae where title like concat('%', '${param1}', '%')
+    		order by id asc limit ${param2}, 20
+    	</select>
+    	
+    <select id="userid_search" resultType="kr.co.ilck.vo.PanmaeVo">
+    		select * from panmae where userid='${param1}'
+    		order by id asc limit ${param2}, 20
+    </select>
+    	
+    <update id="levp_up">
+        update member set levp=levp+5 where userid=#{param}
+
+    </update>
+    
+    <select id="pcontent2" resultType="String">
+        select pcode from panmae  where id=#{param}
+    </select>
+    
+	<insert id="singo_insert_ok" parameterType="kr.co.ilck.vo.SingoVo">
+		insert into singo(userid,singo_userid,panmae_id,content,writeday)
+		values(#{userid},#{singo_userid},#{panmae_id},#{content},now())
+	</insert>
+
+</mapper>

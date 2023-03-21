@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybats-3-mapper.dtd">
+
+	<mapper namespace="kr.co.ilck.mapper.QnaMapper">
+
+		<select id="chong" resultType="int">
+			select ceil(count(*)/10) from qna
+		</select>
+
+		<select id="qna" resultType="kr.co.ilck.vo.QnaVo">
+			select * from qna order by important desc, num desc limit #{param}, 10
+		</select>
+		
+		<!-- <select id="getQna_num" resultType="int">
+			select ifnull(min(num),1) from qna where important=0
+		</select>
+		
+		<select id="getQna_num2" resultType="int">
+			select ifnull(min(num),1) from qna where important=1
+		</select>
+		
+		<update id="qna_num_update">
+			update qna set num=num+1 where num>=#{param}
+		</update> -->
+		
+		<select id="getQna_num" resultType="int">
+			select ifnull(max(num)+1,1) from qna
+		</select>
+		
+		<insert id="qna_write_ok" parameterType="kr.co.ilck.vo.QnaVo">
+			insert into qna(title,result,important,writeday,num)
+			values(#{title},#{result},#{important},now(),#{num})
+		</insert>
+		
+		<select id="getNum" resultType="int">
+			select num from qna where id=#{param}
+		</select>
+		
+		<select id="getImp" resultType="int">
+			select important from qna where id=#{param}
+		</select>
+		
+		<update id="num_change">
+			update qna set num=#{param1} where id=#{param2}
+		</update>
+		
+		<delete id="qna_delete">
+			delete from qna where id=#{param}
+		</delete>
+		
+		<select id="getQna_vo" resultType="kr.co.ilck.vo.QnaVo">
+			select * from qna where id=#{param}
+		</select>
+		
+		<update id="qna_update_ok" parameterType="kr.co.ilck.vo.QnaVo">
+			update qna set title=#{title},important=#{important},result=#{result},
+			writeday=now() where id=#{id}
+		</update>
+
+	</mapper>

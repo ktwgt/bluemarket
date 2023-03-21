@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd"> 
+  	<mapper namespace="kr.co.ilck.mapper.WantMapper">
+	
+	<insert id="write_ok" parameterType="kr.co.ilck.vo.WantVo">
+		insert into want(title,content,userid,fname,writeday,wprice)
+		values(#{title},#{content},#{userid},#{fname},now(),#{wprice})
+	</insert>
+	
+	<select id="list" resultType="kr.co.ilck.vo.WantVo">
+		select * from want order by id desc limit #{param} , 20
+	</select>
+	
+	<select id="getChong" resultType="int">
+    	select ceil( count(*)/20 ) from want
+    </select>
+    
+    <select id="content" resultType="kr.co.ilck.vo.WantVo">
+    	select * from want where id=#{param}
+    </select>
+	
+	<update id="readnum">
+		update want set readnum=readnum+1 where id=#{param}
+	</update>
+	
+	<delete id="delete">
+		delete from want where id=#{param}
+	</delete>
+	
+	<select id="update" resultType="kr.co.ilck.vo.WantVo">
+		select * from want where id=#{param}
+	</select>
+	
+	<update id="update_ok" parameterType="kr.co.ilck.vo.WantVo">
+		update want set title=#{title},content=#{content},fname=#{fname},wprice=#{wprice} where id=#{id}
+	</update>
+	
+  	</mapper>

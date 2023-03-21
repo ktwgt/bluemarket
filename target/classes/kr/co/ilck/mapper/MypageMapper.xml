@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+ 
+<mapper namespace="kr.co.ilck.mapper.MypageMapper">
+	<!-- 마이페이지 거래일정 가져오기 -->
+  	<select id="getCal" resultType="kr.co.ilck.vo.CalVo">
+  		select * from cal where userid=#{param}
+  	</select>
+  	<!-- 마이페이지 회원정보 가져오기 -->
+  	<select id="mypage" resultType="kr.co.ilck.vo.MemberVo">
+  		select * from member where userid=#{param}
+  	</select>
+  	<!-- 찜 목록 가져오기 -->
+  	<select id="getWish" resultType="kr.co.ilck.vo.WishVo">
+  		select p.userid, p.pimg, p.title, p.price, p.pcode,p.sstate, w.id, w.writeday
+		from wish as w, panmae as p
+		where p.id=w.pid and w.userid=#{param1} limit #{param2},10
+  	</select>
+  	<!-- 찜 목록 삭제하기 -->
+  	<delete id="wishdel">
+  		delete from wish where id=#{param}
+  	</delete>
+  	<!-- 내 판매글 목록 가져오기 -->
+  	<select id="getPanmae" resultType="kr.co.ilck.vo.PanmaeVo">
+     	select * from panmae where userid=#{param}
+     	order by sstate asc, id desc
+  	</select>
+  	<!-- 내 판매글 목록 가져오기 -->
+  	<select id="getWant" resultType="kr.co.ilck.vo.WantVo">
+     	select * from want where userid=#{param}
+  	</select>
+  	<!-- 총 페이지 구하기 -->
+ 	<select id="getwChong" resultType="int">
+    	select ceil( count(*)/10 ) from wish
+    	where userid=#{param}
+  	</select>
+  	<!-- 내 게시글 개수 구하기 -->
+  	<select id="myguel" resultType="int">
+  		select count(*) from panmae where userid=#{param}
+  	</select>
+  	<!-- 내 게시글 중 판매완료된 개수 구하기 1판매중 2판매완료-->
+  	<select id="mypguel" resultType="int">
+  		select count(*) from panmae where userid=#{param} and sstate=2
+  	</select>
+  	<!-- 판매글 거래상태 변경 -->
+  	<update id="chgstate">
+     update panmae set sstate=#{param1} where id=#{param2}
+  	</update>
+  	
+  	<select id="mupdate"  resultType="kr.co.ilck.vo.PanmaeVo">
+        select cimg, pimg,pcode, title, price,selltime, loca, pstate, content from panmae where pcode=#{param}
+    </select>
+
+    <update id="mupdate_ok" parameterType="kr.co.ilck.vo.PanmaeVo">
+        update panmae set cimg=#{cimg}, pimg=#{pimg}, title=#{title}, price=#{price},selltime=#{selltime}, loca=#{loca}, pstate=#{pstate}, content=#{content}
+        where pcode=#{pcode}
+    </update>
+
+    <delete id="mdelete">
+        delete from panmae where pcode=#{param}
+    </delete>
+</mapper>

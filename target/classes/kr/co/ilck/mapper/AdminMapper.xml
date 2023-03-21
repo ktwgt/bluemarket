@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybats-3-mapper.dtd">
+  
+  
+  	<mapper namespace="kr.co.ilck.mapper.AdminMapper">
+  	
+  		<select id="chong" resultType="int">		<!-- 한개가 들어갈때는 ${value}로 값을 줘야 한다..? -->
+  			select ceil(count(*)/10) from ${value}
+  		</select>
+  		
+  		<select id="chong2" resultType="int">		<!-- 한개가 들어갈때는 ${value}로 값을 줘야 한다..? -->
+  			select ceil(count(*)/10) from ${param1} where userid!='admin' and state=#{param2}
+  		</select>
+  	
+  		<select id="member_manage" resultType="kr.co.ilck.vo.MemberVo">
+  			select * from member where userid!='admin' order by field(state,'4') desc, id asc limit #{param}, 10
+  		</select>
+  		
+  		<!-- #{param} == 'param' 의 개념 '' 안에 값이 들어가기 때문에 필드명으로 사용할 수 없다
+  			 ${param} ==  param  의 개념 '' 안에 값이 들어가는 것이 아니기 때문에 필드명으로 사용 가능
+  		<select id="member_search" resultType="kr.co.ilck.vo.MemberVo">
+    	select * from member where #{param1} like concat('%', '#{param2}', '%') order by id desc
+    	limit #{param3}, 10
+    	</select>
+  		 -->
+  		
+  		<select id="member_search" resultType="kr.co.ilck.vo.MemberVo">
+    		select * from member where ${param1} like concat('%', '${param2}', '%')
+    		and userid!='admin' order by field(state,'4') desc, id asc
+    		limit ${param3}, 10
+    	</select>
+    	
+    	<select id="member_profile" resultType="kr.co.ilck.vo.MemberVo">
+    		select * from member where id=#{param}
+    	</select>
+    	
+    	<update id="member_state">
+    		update member set state=#{param1} where id=#{param2}
+    	</update>
+    	
+    	<select id="member_guel" resultType="HashMap">	<!-- userid의 전체 판매글과 판매 완료된 글을 return 받는다 -->
+    		select count(*) as guel,
+    		(select count(*) from panmae where sstate=2 and userid=#{param}) as panmae_guel
+    		 from panmae where userid=#{param}
+    	</select>
+    	
+    	<select id="singo_manage" resultType="kr.co.ilck.vo.SingoVo">
+  			select s.*,m.state as state2 from singo as s, member as m 
+  			where s.singo_userid=m.userid
+  			order by s.state asc, s.id asc limit #{param}, 10
+  		</select>
+  		
+  		<select id="singo_manage2" resultType="kr.co.ilck.vo.SingoVo">
+  			select s.*,m.state as state2 from singo as s, member as m 
+  			where s.singo_userid=m.userid and s.state=#{param1}
+  			order by s.state asc, s.id asc limit #{param2}, 10
+  		</select>
+  		
+  		<delete id="singo_del">
+  			delete from singo where id=#{param}
+  		</delete>
+  		
+  		<select id="singo_profile" resultType="kr.co.ilck.vo.SingoVo">
+  			select * from singo where id=#{param}
+  		</select>
+  		
+  		<update id="singo_num">
+  			update member set singo_num=singo_num+1 where userid=#{param}
+  		</update>
+  		
+  		<update id="guel_stop">
+  			update panmae set singo_state=1 where id=#{param}
+  		</update>
+  		
+  		<select id="member_state_chk" resultType="boolean">
+  			select if(singo_num>=3,'true','false') from member where userid=#{param}
+  		</select>
+  		
+  		<update id="member_state_up">
+  			update member set state=1 where userid=#{param}
+  		</update>
+  		
+  		<update id="singo_state_up">
+  			update singo set state=1 where id=#{param}
+  		</update>
+  		
+  		<select id="member_state_value" resultType="int">
+  			select state from member where userid=#{param}
+  		</select>
+  		
+  		<select id="getPanmae_pcode" resultType="String">
+  			select pcode from panmae where id=#{param}
+  		</select>
+  		
+  		
+  		
+  		<select id="event_manage" resultType="kr.co.ilck.vo.EventVo">
+  			select * from event order by id desc
+  		</select>
+  		
+  		<delete id="event_delete">
+  			delete from event where id=#{param}
+  		</delete>
+  		
+  		<insert id="event_add_ok">
+  			insert into event(title, img, writeday)
+  			values(#{param1},#{param2}, now())
+  		</insert>
+  		
+  	</mapper>

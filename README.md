@@ -1,4 +1,4 @@
-# :pushpin: bluumarket
+# :pushpin: bluemarket
 블루마켓 프로젝트
 
 </br>
